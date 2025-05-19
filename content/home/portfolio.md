@@ -28,12 +28,12 @@ content:
   filter_button:
     - name: All
       tag: '*'
-    - name: Machine Learning
-      tag: ML
+    - name: Large Language Model
+      tag: NLP
     - name: Computer Vision
       tag: CV
-    - name: NLP
-      tag: NLP
+    - name: Machine Learning
+      tag: ML
 
 design:
   columns: '1'
