@@ -1,8 +1,19 @@
 ---
-title: Recommendation Systems
-summary: Write about your project here...
+title: 💰 基于 RAG 与 LLM 的多源异构数据驱动的金融认知决策系统
+summary: NL2SQL、意图识别、RAG
 tags:
+  - CV
   - ML
+  - NLP
 date: 2022-01-01
-external_link: http://github.com
 ---
+
+本项目开发了一款多功能的金融认知系统，它是一款以金融基础知识为根基，扩展大量的实时金融信息作为知识库，方便用户及时了解相关的金融信息的AI系统。
+我们的多源异构数据包含：非结构化的本地文档数据（通常由企业的年报、财务报告以及财经类的书籍组成）、非结构化的实时财政数据、结构化的表格数据以及结构化的SQL数据。
+本项目的功能：基本的财经知识问答（支持数字人）、对知识库中的数据进行统计
+
+## 实验分析
+
+## 架构
+
+## 演示
