@@ -3,7 +3,7 @@
 # Hugo Documentation: https://gohugo.io/getting-started/configuration/#all-configuration-settings
 # This file is formatted using YAML syntax - learn more at https://learnxinyminutes.com/docs/yaml/
 
-title: Elian个人主页 Theme # Website name
+title: Elian HomePage # Website name
 baseURL: 'https://2elian.github.io/' # Website URL
 
 ############################
