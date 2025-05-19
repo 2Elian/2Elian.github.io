@@ -45,12 +45,12 @@ social:
   - icon: envelope
     icon_pack: fas
     link: 'about/#contact' # For a direct email link, use "mailto:test@example.org".
-  - icon: twitter
+  - icon: github
     icon_pack: fab
-    link: https://twitter.com/wowchemy
+    link: https://github.com/2Elian
   - icon: instagram
     icon_pack: fab
-    link: https://instagram.com/geocushen
+    link: http://deltaai.top/
 # Uncomment below for Github link
 #- icon: github
 #  icon_pack: fab
