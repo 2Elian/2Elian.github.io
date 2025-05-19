@@ -1,8 +1,21 @@
 ---
-title: 基于LLM蒸馏与强化学习协同优化的时间序列预测研究
-summary: DeepSeek-R1整理、GRPO、DPO
+title: 📈 基于LLM蒸馏与强化学习协同优化的时间序列预测研究
+summary: DeepSeek-R1蒸馏、GRPO、DPO
 tags:
   - CV
-date: 2022-01-01
-external_link: http://github.com
+date: 2025-05-01
+image:
+  caption: 'Image credit: [**Unsplash**](https://unsplash.com)'
 ---
+
+时间序列预测任务在金融、能源、交通等场景中具有重要应用价值，传统的统计模型和深度学习方法虽能捕捉局部时序特征，但受限于对复杂非线性模式建模能力不足或依赖大规模标注数据
+。本文提出一种融合大语言模型（LLM）蒸馏与多阶段强化学习协同优化的新型方法，通过引入LLM的抽象推理能力与强化学习的动态策略优化，突破传统方法的局限性。
+
+## 实验分析
+xxx
+
+## 算法细节
+
+
+## 项目演示
+
