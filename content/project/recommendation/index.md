@@ -1,5 +1,5 @@
 ---
-title: 💰 基于 RAG 与 LLM 的多源异构数据驱动的金融认知决策系统
+title: 🐣 基于 RAG 与 LLM 的多源异构数据驱动的金融认知决策系统
 summary: NL2SQL、意图识别、RAG
 tags:
   - CV
