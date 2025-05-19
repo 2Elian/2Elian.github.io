@@ -4,7 +4,7 @@
 # This file is formatted using YAML syntax - learn more at https://learnxinyminutes.com/docs/yaml/
 
 title: Elian HomePage # Website name
-baseURL: 'https://2elian.github.io/' # Website URL
+baseURL: 'https://2elian.github.io' # Website URL
 
 ############################
 ## PAGE OPTIONS
