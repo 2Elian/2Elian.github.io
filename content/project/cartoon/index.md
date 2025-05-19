@@ -1,5 +1,5 @@
 ---
-title: 📈 基于LLM蒸馏与强化学习协同优化的时间序列预测研究
+title: 📈 基于LLM蒸馏与多阶段强化学习协同优化的时间序列预测研究
 summary: DeepSeek-R1蒸馏、GRPO、DPO
 tags:
   - CV
