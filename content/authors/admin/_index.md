@@ -1,6 +1,6 @@
 ---
 # Display name
-title: Alice Wu (吳恩達)
+title: Elian(李子茉)
 
 # Is this the primary user of the site?
 superuser: true
@@ -18,7 +18,7 @@ status:
 #  url: ""
 
 # Short bio (displayed in user profile at end of posts)
-bio: My research interests include distributed robotics, mobile computing and programmable matter.
+bio: My research interests include content understanding with large language models and multimodal retrieval. This is my personal portfolio page, and you can view my works in the portfolio below. You can contact me at lizimo@nuist.edu.cn.
 
 #interests:
 #- Artificial Intelligence
@@ -66,8 +66,8 @@ social:
 #email: ""
 ---
 
-Alice Wu is a professor of artificial intelligence at the Stanford AI Lab. Her research interests include distributed robotics, mobile computing and programmable matter. She leads the Robotic Neurobiology group, which develops self-reconfiguring robots, systems of self-organizing robots, and mobile sensor networks.
+Zimo Li(Elian) is currently a master's student at Nanjing University of Information Science and Technology. My research interests include content understanding with large language models and multimodal retrieval. This is my personal portfolio page, and you can view my works in the portfolio below. You can contact me at lizimo@nuist.edu.cn.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque elit, tristique placerat feugiat ac, facilisis vitae arcu. Proin eget egestas augue. Praesent ut sem nec arcu pellentesque aliquet. Duis dapibus diam vel metus tempus vulputate.
+李子茉(Elian)目前是南京信息工程大学的一名硕士研究生。我的研究兴趣包括大语言模型内容理解和多模态检索。这里是我的个人作品主页，您可以在下方的作品集中查看我的作品。您可以通过lizimo@nuist.edu.cn联系到我.
 
 {{< icon name="download" pack="fas" >}} {{< staticref "uploads/resume.pdf" "newtab" >}}Download{{< /staticref >}} my resumé as a PDF.
