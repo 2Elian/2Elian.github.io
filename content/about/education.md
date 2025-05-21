@@ -29,7 +29,7 @@ experience:
     location: California
     date_start: '2023-09-10'
     date_end: '2026-06-30'
-    description: My main research direction is: content understanding and generation of large language models
+    description: 'My main research direction is: content understanding and generation of large language models'
 
   - title: Bachelor of Electronic Information
     company: Hengshui University
