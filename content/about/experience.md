@@ -43,7 +43,11 @@ experience:
     location: 中国 - 南京
     date_start: '2024-07-10'
     date_end: '2024-12-12'
-    description: 该段实习期间我的工作内容为：主导设计面向智慧气象与智能金融领域的大模型应用系统，包括LLM的蒸馏训练、推理加速、RAG设计与优化等工作。
+    description: |2-
+        实习期间我的工作内容为：主导设计面向智慧气象与智能金融领域的大模型应用系统，其中包括
+        * LLM的微调训练
+        * LLM的推理加速
+        * RAG架构设计与性能优化
 
 design:
   columns: '1'

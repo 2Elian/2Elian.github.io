@@ -32,7 +32,7 @@ experience:
     description: 'My main research direction is: content understanding and generation of large language models'
 
   - title: 衡水学院 - 本科
-    company: 电气智能化
+    company: 专业：电气智能化
     company_url: ''
     company_logo: educa
     location: 衡水
