@@ -18,7 +18,8 @@ status:
 #  url: ""
 
 # Short bio (displayed in user profile at end of posts)
-bio: I am currently a master's student at Nanjing University of Information Science and Technology. My research interests include content understanding of large language models and multimodal retrieval. This is my personal portfolio page, you can view my works in the portfolio on the homepage. You can contact me at lizimo@nuist.edu.cn. <font color=red>My future work will focus on: 'new architecture exploration' and 'post-training alignment' of LLM.</font>
+bio: |
+  I am currently a master's student at Nanjing University of Information Science and Technology. My research interests include content understanding of large language models and multimodal retrieval. This is my personal portfolio page, you can view my works in the portfolio on the homepage. You can contact me at lizimo@nuist.edu.cn. <font color=red>My future work will focus on: 'new architecture exploration' and 'post-training alignment' of LLM.</font>
 
 #interests:
 #- Artificial Intelligence
