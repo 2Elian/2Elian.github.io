@@ -10,7 +10,7 @@ headless: true
 weight: 40
 
 # Note: `&shy;` is used to add a 'soft' hyphen in a long heading.
-title: 'Accomplish&shy;ments'
+title: 'Published Papers'
 subtitle:
 
 # Date format
@@ -27,15 +27,15 @@ item:
     date_end: ''
     date_start: '2021-01-25'
     description: ''
-    organization: Coursera
+    organization: CVPR
     organization_url: https://www.coursera.org
-    title: Neural Networks and Deep Learning
+    title: Time series prediction based on LLM distillation and multi-round reinforcement learning
     url: ''
   - certificate_url: https://www.edx.org
     date_end: ''
     date_start: '2021-01-01'
-    description: Formulated informed blockchain models, hypotheses, and use cases.
-    organization: edX
+    description: ''
+    organization: ICLR
     organization_url: https://www.edx.org
     title: Blockchain Fundamentals
     url: https://www.edx.org/professional-certificate/uc-berkeleyx-blockchain-fundamentals

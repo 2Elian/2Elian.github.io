@@ -68,6 +68,6 @@ social:
 
 Zimo Li(Elian) is currently a master's student at Nanjing University of Information Science and Technology. My research interests include content understanding with large language models and multimodal retrieval. This is my personal portfolio page, and you can view my works in the portfolio below. You can contact me at lizimo@nuist.edu.cn.
 
-李子茉(Elian)目前是南京信息工程大学的一名硕士研究生。我的研究兴趣包括大语言模型内容理解和多模态检索。这里是我的个人作品主页，您可以在下方的作品集中查看我的作品。您可以通过lizimo@nuist.edu.cn联系到我.
+我目前是南京信息工程大学的一名硕士研究生。我的研究兴趣包括大语言模型内容理解和多模态检索。这里是我的个人作品主页，您可以在首页的作品集中查看我的作品。您可以通过lizimo@nuist.edu.cn联系到我。<font color=red>未来我的工作重心将在：LLM的架构设计探索与后训练等方面</font>
 
 {{< icon name="download" pack="fas" >}} {{< staticref "uploads/resume.pdf" "newtab" >}}Download{{< /staticref >}} my resumé as a PDF.
