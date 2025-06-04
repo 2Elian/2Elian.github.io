@@ -11,7 +11,7 @@ date: 2022-01-01
 本项目开发了一款可以在Windows系统上进行大模型微调训练的工具，微调推理框架基于transformers库进行开发。
 
 如果您是一名LLM工程师，您可以自行构建您的微调推理代码。
-如果您熟悉Docker与Linux虚拟机的安装与操作您可以选择[LlamaFactory](https://www.markdownguide.org)进行LLM微调与推理。但如果您是一名小白，且仅有Windows操作系统，ElianFactory是您的最佳选择。
+如果您熟悉Docker与Linux虚拟机的安装与操作您可以选择[LlamaFactory](https://github.com/hiyouga/LLaMA-Factory)进行LLM微调与推理。但如果您是一名小白，且仅有Windows操作系统，[LlamaFactory](https://github.com/2elian/Elian-Factory)是您的最佳选择。
 
 ## ElianFactory的优势
 
