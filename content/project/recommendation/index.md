@@ -23,6 +23,4 @@ date: 2022-01-01
 
 ## 演示视频
 
-<video width="600" controls>
-  <source src="https://github.com/2Elian/Elian-Factory/img/video.mp4" type="video/mp4">
-</video>
+![演示地址](./video.gif)
