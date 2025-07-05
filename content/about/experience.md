@@ -22,19 +22,19 @@ date_format: Jan 2006
 #   Leave `date_end` empty if it's your current employer.
 #   Begin multi-line descriptions with YAML's `|2-` multi-line prefix.
 experience:
-  - title: 未来期待的职位
-    company: 大模型算法工程师
+  - title: AIGC算法实习生
+    company: Vivo
     company_url: ''
     company_logo: org-gc
-    location: 中国 - 济南
-    date_start: '2026-07-01'
+    location: 中国 - 南京
+    date_start: '2026-06-01'
     date_end: ''
     description: |2-
-        期待的工作内容:
+        工作内容: 深度参与Vivo自研的内容智能创作平台，负责多模态大模型/语言模型的业务化对齐微调训练、Agent工作流设计与搭建、项目工程落地开发(基于Python、Java实现完整的后端开发系统)
         
-        * LLM新架构的探索
-        * LLM后训练的新范式探索与推理探索
-        * LLM落地应用开发
+        * DeepSeek/Qwen模型的SFT与RL训练
+        * 针对训练好的模型，负责对其量化与部署，提升推理的性能与效率
+        * 基于ComfiUI设计工作流，并基于FastAPI、SpringBoot等框架构建完整的后端业务化系统
 
   - title: 大模型开发工程师(实习)
     company: 南信大苏州影像技术有限公司
