@@ -1,10 +1,9 @@
 ---
-title: 从策略梯度PG到群组序列策略优化GSPO: 关于RLHF的一些思考
-summary: LLM、RL、RLHF、PPO、GRPO、GSPO
+title: "从策略梯度PG到群组序列策略优化GSPO: 关于RLHF的一些思考"
+summary: "LLM、RL、RLHF、PPO、GRPO、GSPO"
 tags:
   - NLP
 date: 2025-08-29
-
 ---
 
 本文将从LLM-RL的优化目标开始引入策略梯度，并逐渐过度到GSPO算法。同时会指出当前RLHF的问题以及自己做过的一些实验所总结的解决方法。
