@@ -115,3 +115,42 @@ ul.network-icon .big-icon {
 .wg-about .portrait-title h3 {
   font-size: 0.8rem;
 }
+
+// Uniform project card image sizes
+.card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+
+// Portfolio widget project cards
+.portfolio-item .card-image img,
+.portfolio-item .featured-image img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+
+// Project card container
+.project-card .card-image,
+.project-card .featured-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 10px 10px 0 0;
+}
+
+.project-card .card-image img,
+.project-card .featured-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover .card-image img,
+.project-card:hover .featured-image img {
+  transform: scale(1.05);
+}
