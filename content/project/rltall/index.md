@@ -36,17 +36,17 @@ date: 2025-08-29
 > - $r_t$ 表示在第 $t$ 步生成 token $a_t$ 后获得的即时奖励（reward），这个reward的目的是激励或者抑制当前token的输出概率，如果生成当前token获得的reward高，则代表鼓励当前token的生成，反之抑制当前token的生成。  
 >   在 RLHF 中，这个 reward 通常由一个 **奖励模型** 或者 **人类反馈** 给出，例如对生成的完整回答打分，或者对某一步的 token 给出偏好信号。  
 > - $R(\tau)$ 表示整条轨迹 $\tau$ 的回报（return）。常见的定义是所有 reward 的加权和：  
->   $$
+>   $
 >   R(\tau) = \sum_{t=0}^{T} \gamma^t r_t
->   $$
+>   $
 >   其中 $\gamma \in [0,1]$ 是折扣因子。  
 
 
 > **优化目标**  
 >
-> $$
+> $
 > \max_{\theta} \; \mathbb{E}_{\tau \sim \pi_{\theta}}[R(\tau)]
-> $$
+> $
 >
 > 含义如下：  
 > - $\pi_\theta$ ：由参数 $\theta$ 控制的 LLM 策略（即模型本身）；  
@@ -62,9 +62,9 @@ date: 2025-08-29
 
 我们的优化目标是：
 
-$$
+$
 \max_{\theta} \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)].
-$$
+$
 
 要想实现这一点，关键在于如何调整参数 $\theta$。  
 一个自然的思路是：**对目标函数关于 $\theta$ 求梯度，然后沿着梯度上升的方向更新参数**。  
