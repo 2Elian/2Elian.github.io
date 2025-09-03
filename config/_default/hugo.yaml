@@ -61,6 +61,16 @@ taxonomies:
 markup:
   _merge: deep
   goldmark:
+    renderer:
+      unsafe: true
+      hardWraps: false
+      xhtml: false
+    parser:
+      attribute:
+        block: true
+        title: true
+      autoHeadingID: true
+      autoHeadingIDType: github
     extensions:
       passthrough:
         enable: true
@@ -75,8 +85,6 @@ markup:
               - "$"
             - - "\\("
               - "\\)"
-    renderer:
-      unsafe: true
 related:
   threshold: 80
   includeNewer: true

@@ -36,17 +36,13 @@ date: 2025-08-29
 > - $r_t$ 表示在第 $t$ 步生成 token $a_t$ 后获得的即时奖励（reward），这个reward的目的是激励或者抑制当前token的输出概率，如果生成当前token获得的reward高，则代表鼓励当前token的生成，反之抑制当前token的生成。  
 >   在 RLHF 中，这个 reward 通常由一个 **奖励模型** 或者 **人类反馈** 给出，例如对生成的完整回答打分，或者对某一步的 token 给出偏好信号。  
 > - $R(\tau)$ 表示整条轨迹 $\tau$ 的回报（return）。常见的定义是所有 reward 的加权和：  
->   $
->   R(\tau) = \sum_{t=0}^{T} \gamma^t r_t
->   $
+>   $$R(\tau) = \sum_{t=0}^{T} \gamma^t r_t$$
 >   其中 $\gamma \in [0,1]$ 是折扣因子。  
 
 
 > **优化目标**  
 >
-> $
-\max_{\theta} \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]
-> $
+> $$\max_{\theta} \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]$$
 >
 > 含义如下：  
 > - $\pi_\theta$ ：由参数 $\theta$ 控制的 LLM 策略（即模型本身）；  
@@ -62,16 +58,13 @@ date: 2025-08-29
 
 我们的优化目标是：
 
-> $
->\max_{\theta} \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]
-> $
+$$\max_{\theta} \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]$$
 
 要想实现这一点，关键在于如何调整参数 $\theta$。  
 一个自然的思路是：**对目标函数关于 $\theta$ 求梯度，然后沿着梯度上升的方向更新参数**。  
 换句话说，只要我们能够写出：
-$
-\nabla_\theta \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)],
-$
+
+$$\nabla_\theta \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]$$
 就可以使用梯度上升来逐步优化策略。
 
 这就是所谓的 **策略梯度 (Policy Gradient, PG)** 方法的基本出发点。
@@ -103,14 +96,7 @@ $$
 
 总结一下，策略梯度可以写成：
 
-$
-\nabla_\theta \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]
-\;\approx\; 
-\frac{1}{N}\sum_{n=1}^{N}\!
-\left[
-   \Big( \sum_{t=0}^{T_n} \nabla_\theta \log \pi_\theta(a_t^n \mid s_t^n) \Big)\, R(\tau^{n})
-\right].
-$
+$$\nabla_\theta \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)] \;\approx\; \frac{1}{N}\sum_{n=1}^{N}\!\left[\Big( \sum_{t=0}^{T_n} \nabla_\theta \log \pi_\theta(a_t^n \mid s_t^n) \Big)\, R(\tau^{n})\right]$$
 
 也就是说：根据上面的推导，我们只需要沿着该公式给出的 梯度上升方向 去更新参数 $\theta$，就能最大化期望回报。
 
@@ -118,22 +104,11 @@ $
 
 为了使用梯度下降，可以定义策略梯度的 loss 为：
 
-$
-\mathcal{L}(\theta) \;=\; - \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]
-$
+$$\mathcal{L}(\theta) \;=\; - \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]$$
 
 对应的梯度就是：
 
-$
-\nabla_\theta \mathcal{L}(\theta) \;=\; - \nabla_\theta \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]
-\;\approx\; 
-$
-$
-\frac{1}{N}\sum_{n=1}^{N}\!
-\left[
-   \Big( \sum_{t=0}^{T_n} \nabla_\theta \log \pi_\theta(a_t^n \mid s_t^n) \Big)\, R(\tau^{n})
-\right].
-$
+$$\nabla_\theta \mathcal{L}(\theta) \;=\; - \nabla_\theta \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)] \;\approx\; - \frac{1}{N}\sum_{n=1}^{N}\!\left[\Big( \sum_{t=0}^{T_n} \nabla_\theta \log \pi_\theta(a_t^n \mid s_t^n) \Big)\, R(\tau^{n})\right]$$
 
 这就是梯度策略的算法！
 
@@ -241,21 +216,16 @@ V^\pi(s_t) = \sum_{a_t} \pi(a_t \mid s_t) \, Q^\pi(s_t, a_t)
 >>
 >> ...
 >>
->> $A^{\pi}_T = r_t + \gamma r_{t+1} +  \gamma^2 r_{t+2} +  \gamma^3 r_{t+3} + ... +  \gamma^T r_{t+T} - V^{\pi}(s_t)
->>$
+>> $A^{\pi}_T = r_t + \gamma r_{t+1} +  \gamma^2 r_{t+2} +  \gamma^3 r_{t+3} + ... +  \gamma^T r_{t+T} - V^{\pi}(s_t)$
 >>
-> 令$\delta_t = r_t + \gamma V^{\pi}(s_{t+1}) - V^{\pi}(s_t)$, 则$A^{\pi}_{1} = \delta_t$ , $A^{\pi}_{2} = \delta_t + \gamma \delta_{t+1}$, ... , $A^{\pi}_{T} = \delta_t + \gamma \delta_{t+1} + \gamma^2 \delta_{t+2} + ...
-> $
+> 令$\delta_t = r_t + \gamma V^{\pi}(s_{t+1}) - V^{\pi}(s_t)$, 则$A^{\pi}_{1} = \delta_t$ , $A^{\pi}_{2} = \delta_t + \gamma \delta_{t+1}$, ... , $A^{\pi}_{T} = \delta_t + \gamma \delta_{t+1} + \gamma^2 \delta_{t+2} + ...$
 
 那么我们在实际应用的时候到底选几步采样来计算优势函数呢？PPO算法中说：我全都要！PPO中采用一个广义优势估计的方法，即GAE：
 
 > $A^{\pi}(GAE) = (1-\lambda)(A^{\pi}_1 + \lambda A^{\pi}_2 + \lambda^2 A^{\pi}_3) + ...$, 其中超参数 $\lambda \in [0,1]$ 控制 bias-variance 权衡，实际训练中常取 $\lambda = 0.9$。
 >
 > 此时：PPO的雏形为：
-> $\frac{1}{N}\sum_{n=1}^{N}
-\left[
-   \sum_{t=0}^{T_n} \Big( \nabla_\theta \log \pi_\theta(a_t^n \mid s_t^n) \, A^{GAE}_{\theta}(a_t^n , s_t^n)\Big)
-\right]$
+> $$\frac{1}{N}\sum_{n=1}^{N}\left[\sum_{t=0}^{T_n} \Big( \nabla_\theta \log \pi_\theta(a_t^n \mid s_t^n) \, A^{GAE}_{\theta}(a_t^n , s_t^n)\Big)\right]$$
 
 为什么说它是雏形呢？因为当前的目标函数还有一定的问题：
 
@@ -423,9 +393,7 @@ $$
 
 其中 KL 散度计算为：
 
-$
-\text{KL}(t) = \log \frac{\pi^{\text{old}}_{\text{RL}}(a_t \mid s_t)}{\pi_{\text{SFT}}(a_t \mid s_t)}
-$
+$$\text{KL}(t) = \log \frac{\pi^{\text{old}}_{\text{RL}}(a_t \mid s_t)}{\pi_{\text{SFT}}(a_t \mid s_t)}$$
 
 > 说明：
 > - 指示函数 $\mathbb{I}(s_t = \text{[EOS]})$ 表示仅当 $s_t$ 为句子结束标志（EOS）时取值为 1，否则为 0。这是因为一条序列实际上reward模型只会对最后一个token输出一个奖励值，token粒度的奖励值需要用kl散度来计算！  
@@ -438,10 +406,7 @@ $
 > **k1估计**
 >> let $\frac{p(x)}{q(x)} = r$, k1 = -log(r)
 >>
->> 则
->>$
->>\mathbb{E}_{x\sim Q}[k1] = \mathbb{E}_{x\sim Q}[-log(r)] = \mathbb{E}_{x\sim Q}[log\frac{q(x)}{p(x)}] = KL(Q\mid P)
->>$
+>> 则：$$\mathbb{E}_{x\sim Q}[k1] = \mathbb{E}_{x\sim Q}[-log(r)] = \mathbb{E}_{x\sim Q}[log\frac{q(x)}{p(x)}] = KL(Q\mid P)$$
 >>
 >>也就是说：构造的k1是KL散度的无偏估计（构造函数的期望值等于目标值）
 >>
