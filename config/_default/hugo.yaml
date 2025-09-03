@@ -60,6 +60,23 @@ taxonomies:
   author: authors
 markup:
   _merge: deep
+  goldmark:
+    extensions:
+      passthrough:
+        enable: true
+        delimiters:
+          block:
+            - - "$$"
+              - "$$"
+            - - "\\["
+              - "\\]"
+          inline:
+            - - "$"
+              - "$"
+            - - "\\("
+              - "\\)"
+    renderer:
+      unsafe: true
 related:
   threshold: 80
   includeNewer: true
