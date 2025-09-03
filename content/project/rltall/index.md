@@ -45,7 +45,7 @@ date: 2025-08-29
 > **优化目标**  
 >
 > $
->\max_{\theta} \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]
+\max_{\theta} \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]
 > $
 >
 > 含义如下：  
