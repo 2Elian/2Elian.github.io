@@ -45,14 +45,14 @@ date: 2025-08-29
 > **优化目标**  
 >
 > $
-> \max_{\theta} \; \mathbb{E}_{\tau \sim \pi_{\theta}}[R(\tau)]
+>\max_{\theta} \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]
 > $
 >
 > 含义如下：  
 > - $\pi_\theta$ ：由参数 $\theta$ 控制的 LLM 策略（即模型本身）；  
 > - $\tau \sim \pi_\theta$ ：轨迹 $\tau$ 是由策略 $\pi$ 采样得到的 (注意：我这里说的是$\pi$，而不是$\pi_{\theta}$。这是因为后续的PPO等算法，采样都是从老模型采样，这里暂时注意一下不要混淆！) 
 > - $R(\tau)$ ：轨迹 $\tau$ 的回报（Return），衡量生成序列的整体质量；  
-> - $\mathbb{E}_{\tau \sim \pi_{\theta}}[R(\tau)]$ ：在策略 $\pi_\theta$ 下，生成轨迹的期望回报；  
+> - $\mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]$ ：在策略 $\pi_\theta$ 下，生成轨迹的期望回报；  
 > - $\max_\theta$ ：通过优化模型参数 $\theta$，让期望回报最大化。  
 >
 > 换句话说，RLHF 的目标就是：**找到一组模型参数，使得模型生成的序列在平均意义下尽可能获得更高的奖励**。
@@ -62,18 +62,16 @@ date: 2025-08-29
 
 我们的优化目标是：
 
-$
-\max_{\theta} \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)].
-$
+> $
+>\max_{\theta} \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]
+> $
 
 要想实现这一点，关键在于如何调整参数 $\theta$。  
 一个自然的思路是：**对目标函数关于 $\theta$ 求梯度，然后沿着梯度上升的方向更新参数**。  
 换句话说，只要我们能够写出：
-
-$$
+$
 \nabla_\theta \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)],
-$$
-
+$
 就可以使用梯度上升来逐步优化策略。
 
 这就是所谓的 **策略梯度 (Policy Gradient, PG)** 方法的基本出发点。
@@ -85,19 +83,14 @@ $$
 \nabla_\theta \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]
 &= \nabla_\theta \sum_{\tau} \pi_\theta(\tau) R(\tau) 
 && \small\text{(期望定义)} \\
-
 &= \sum_{\tau} \nabla_\theta \pi_\theta(\tau) R(\tau) 
 && \small\text{(把梯度移进去)} \\
-
 &= \sum_{\tau} \pi_\theta(\tau)\, \nabla_\theta \log \pi_\theta(\tau) R(\tau) 
 && \small\text{(log-derivative trick)} \\
-
 &= \mathbb{E}_{\tau \sim \pi_\theta}\!\left[ \nabla_\theta \log \pi_\theta(\tau)\, R(\tau) \right] 
 && \small\text{(转回期望)} \\
-
 &= \frac{1}{N}\sum_{n=1}^{N}\!\left[ \nabla_\theta \log \pi_\theta(\tau^{n})\, R(\tau^{n}) \right] 
 && \small\text{(大数定律：经验平均)} \\
-
 &= \frac{1}{N}\sum_{n=1}^{N}\!\left[ 
    \Big( \sum_{t=0}^{T_n} \nabla_\theta \log \pi_\theta(a_t^n \mid s_t^n) \Big)\, R(\tau^{n})
 \right] 
@@ -110,14 +103,14 @@ $$
 
 总结一下，策略梯度可以写成：
 
-$$
+$
 \nabla_\theta \; \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]
 \;\approx\; 
 \frac{1}{N}\sum_{n=1}^{N}\!
 \left[
    \Big( \sum_{t=0}^{T_n} \nabla_\theta \log \pi_\theta(a_t^n \mid s_t^n) \Big)\, R(\tau^{n})
 \right].
-$$
+$
 
 也就是说：根据上面的推导，我们只需要沿着该公式给出的 梯度上升方向 去更新参数 $\theta$，就能最大化期望回报。
 
@@ -125,20 +118,22 @@ $$
 
 为了使用梯度下降，可以定义策略梯度的 loss 为：
 
-$$
+$
 \mathcal{L}(\theta) \;=\; - \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]
-$$
+$
 
 对应的梯度就是：
 
-$$
+$
 \nabla_\theta \mathcal{L}(\theta) \;=\; - \nabla_\theta \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]
 \;\approx\; 
-- \frac{1}{N}\sum_{n=1}^{N}\!
+$
+$
+\frac{1}{N}\sum_{n=1}^{N}\!
 \left[
    \Big( \sum_{t=0}^{T_n} \nabla_\theta \log \pi_\theta(a_t^n \mid s_t^n) \Big)\, R(\tau^{n})
 \right].
-$$
+$
 
 这就是梯度策略的算法！
 
@@ -159,7 +154,7 @@ $$
 >
 > **2.Baseline问题：**
 >
-> > 在前面由问题1修正公式中，策略梯度估计是：$\frac{1}{N}\sum_{n=1}^{N}\!
+> > 在前面由问题1修正公式中，策略梯度估计是：$\frac{1}{N}\sum_{n=1}^{N}
 \left[
    \sum_{t=0}^{T_n} \Big( \nabla_\theta \log \pi_\theta(a_t^n \mid s_t^n) \, R(\tau^n)\Big)
 \right]$
@@ -168,7 +163,7 @@ $$
 因为 $R(\tau^n)$ 的数值可能在不同轨迹之间相差非常大，而 $\nabla_\theta \log \pi_\theta$ 又会放大这种差异，导致梯度估计波动剧烈，训练过程很不稳定。
 > >
 > > 解决方法：引入 Baseline。
-我们可以在 return 外减去一个与状态有关的基准值 $b(s_t)$：$\frac{1}{N}\sum_{n=1}^{N}\!
+我们可以在 return 外减去一个与状态有关的基准值 $b(s_t)$：$\frac{1}{N}\sum_{n=1}^{N}
 \left[
    \sum_{t=0}^{T_n} \Big( \nabla_\theta \log \pi_\theta(a_t^n \mid s_t^n) \, (R_t^n - b(s_t^n))\Big)
 \right]$
@@ -194,10 +189,10 @@ $$
 > **1.State Value Funcation 状态价值函数**
 > >
 > > 状态价值函数记作 $V(s_t)$，含义是：在状态 $s_t$ 下，按照当前策略 $\pi$ 行动，未来期望获得的 return：
-> > $$
+> > $
 V^\pi(s_t) = \mathbb{E}_\pi \big[ R_t \mid s_t \big], 
 \quad R_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \dots
->>$$
+>>$
 > >
 > > 其中 $\gamma \in [0,1)$ 是折扣因子，用来让未来的奖励逐步衰减。
 >
@@ -238,22 +233,26 @@ V^\pi(s_t) = \sum_{a_t} \pi(a_t \mid s_t) \, Q^\pi(s_t, a_t)
 > >
 > > $A^{\pi}_i$代表对状态价值的i次采样估计：
 > >
-> > $A^{\pi}_1 = r_t + \gamma V^{\pi}(s_{t+1}) - V^{\pi}(s_t)$
+> > $A^{\pi}_1 = r_t + \gamma V^{\pi}(s_{t+1}) - V^{\pi}(s_t)
+> >$
 > >
-> >$A^{\pi}_2 = r_t + \gamma (r_{t+1} + \gamma V^{\pi}(s_{t+2})) - V^{\pi}(s_t)$
+> >$A^{\pi}_2 = r_t + \gamma (r_{t+1} + \gamma V^{\pi}(s_{t+2})) - V^{\pi}(s_t)
+>>$
 >>
 >> ...
 >>
->> $A^{\pi}_T = r_t + \gamma r_{t+1} +  \gamma^2 r_{t+2} +  \gamma^3 r_{t+3} + ... +  \gamma^T r_{t+T} - V^{\pi}(s_t)$
->
-> 令$\delta_t = r_t + \gamma V^{\pi}(s_{t+1}) - V^{\pi}(s_t)$, 则$A^{\pi}_1 = \delta_t$ , $A^{\pi}_2 = \delta_t + \gamma \delta_{t+1}$, ... , $A^{\pi}_T = \delta_t + \gamma \delta_{t+1} + \gamma^2 \delta_{t+2} + ...$ 
+>> $A^{\pi}_T = r_t + \gamma r_{t+1} +  \gamma^2 r_{t+2} +  \gamma^3 r_{t+3} + ... +  \gamma^T r_{t+T} - V^{\pi}(s_t)
+>>$
+>>
+> 令$\delta_t = r_t + \gamma V^{\pi}(s_{t+1}) - V^{\pi}(s_t)$, 则$A^{\pi}_{1} = \delta_t$ , $A^{\pi}_{2} = \delta_t + \gamma \delta_{t+1}$, ... , $A^{\pi}_{T} = \delta_t + \gamma \delta_{t+1} + \gamma^2 \delta_{t+2} + ...
+> $
 
 那么我们在实际应用的时候到底选几步采样来计算优势函数呢？PPO算法中说：我全都要！PPO中采用一个广义优势估计的方法，即GAE：
 
 > $A^{\pi}(GAE) = (1-\lambda)(A^{\pi}_1 + \lambda A^{\pi}_2 + \lambda^2 A^{\pi}_3) + ...$, 其中超参数 $\lambda \in [0,1]$ 控制 bias-variance 权衡，实际训练中常取 $\lambda = 0.9$。
 >
 > 此时：PPO的雏形为：
-> $\frac{1}{N}\sum_{n=1}^{N}\!
+> $\frac{1}{N}\sum_{n=1}^{N}
 \left[
    \sum_{t=0}^{T_n} \Big( \nabla_\theta \log \pi_\theta(a_t^n \mid s_t^n) \, A^{GAE}_{\theta}(a_t^n , s_t^n)\Big)
 \right]$
@@ -269,7 +268,8 @@ V^\pi(s_t) = \sum_{a_t} \pi(a_t \mid s_t) \, Q^\pi(s_t, a_t)
 >>
 >> 假设现在我有一个随机变量X服从于分布P(x), 然后我要计算f(x)的期望：$\mathbb{E}_{X\sim P(x)}[f(x)]$
 >>
->> $\mathbb{E}_{X\sim P(x)}[f(x)] = \sum_{} f(x)p(x) = \sum_{} f(x)\frac{p(x)}{q(x)}q(x) = \mathbb{E}_{X\sim Q(x)}[f(x)\frac{p(x)}{q(x)}]$.
+>> $\mathbb{E}_{X\sim P(x)}[f(x)] = \sum_{} f(x)p(x) = \sum_{} f(x)\frac{p(x)}{q(x)}q(x) = \mathbb{E}_{X\sim Q(x)}[f(x)\frac{p(x)}{q(x)}].
+>>$
 >>
 >> 即，我如果从P分布里面不好采样，我可以转向一个好采样的Q分布，然后计算f(x)与$\frac{p(x)}{q(x)}$的乘积的期望即可。
 >>
@@ -423,9 +423,9 @@ $$
 
 其中 KL 散度计算为：
 
-$$
+$
 \text{KL}(t) = \log \frac{\pi^{\text{old}}_{\text{RL}}(a_t \mid s_t)}{\pi_{\text{SFT}}(a_t \mid s_t)}
-$$
+$
 
 > 说明：
 > - 指示函数 $\mathbb{I}(s_t = \text{[EOS]})$ 表示仅当 $s_t$ 为句子结束标志（EOS）时取值为 1，否则为 0。这是因为一条序列实际上reward模型只会对最后一个token输出一个奖励值，token粒度的奖励值需要用kl散度来计算！  
@@ -438,7 +438,10 @@ $$
 > **k1估计**
 >> let $\frac{p(x)}{q(x)} = r$, k1 = -log(r)
 >>
->> 则$\mathbb{E}_{x\sim Q}[k1] = \mathbb{E}_{x\sim Q}[-log(r)] = \mathbb{E}_{x\sim Q}[log\frac{q(x)}{p(x)}] = KL(Q\mid P)$
+>> 则
+>>$
+>>\mathbb{E}_{x\sim Q}[k1] = \mathbb{E}_{x\sim Q}[-log(r)] = \mathbb{E}_{x\sim Q}[log\frac{q(x)}{p(x)}] = KL(Q\mid P)
+>>$
 >>
 >>也就是说：构造的k1是KL散度的无偏估计（构造函数的期望值等于目标值）
 >>
@@ -458,7 +461,10 @@ $$
 > **k2估计**
 > > k2 = $\frac{1}{2}(logr)^2$
 >>
->>$\mathbb{E}_{x\sim Q}[k2] = \mathbb{E}_{x\sim Q}[\frac{1}{2}(logr)^2] = \frac{1}{2}\mathbb{E}_{x\sim Q}[(logr)^2] = \frac{1}{2}\sum q(x)(logr)^2  \neq KL(Q\mid P)$
+>>
+>>$
+\mathbb{E}_{x\sim Q}[k2] = \mathbb{E}_{x\sim Q}[\frac{1}{2}(logr)^2] = \frac{1}{2}\mathbb{E}_{x\sim Q}[(logr)^2] = \frac{1}{2}\sum q(x)(logr)^2  \neq KL(Q\mid P)
+>>$
 >>
 >> 因此k2估计器是KL散度的有偏估计
 >>
@@ -468,7 +474,10 @@ $$
 > >
 > >k3 = $r - 1 - logr$
 > >
-> >$\mathbb{E}_{x\sim Q}[k3] = \mathbb{E}_{x\sim Q}[r-1-logr] = \mathbb{E}_{x\sim Q}[r]  - \mathbb{E}_{x\sim Q}[1] - \mathbb{E}_{x\sim Q}[logr]$
+> >
+> >$
+> >\mathbb{E}_{x\sim Q}[k3] = \mathbb{E}_{x\sim Q}[r-1-logr] = \mathbb{E}_{x\sim Q}[r]  - \mathbb{E}_{x\sim Q}[1] - \mathbb{E}_{x\sim Q}[logr]
+> >$
 > >
 > >=$\sum q(x)*(\frac{p(x)}{q(x)}) - \sum q(x) -  \mathbb{E}_{x\sim Q}[logr]$
 > >
@@ -489,6 +498,8 @@ $$
 
 
 ## 5. GRPO 
+
+
 
 ## 6. GRPO会出现的一些问题
 
