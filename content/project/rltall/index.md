@@ -181,38 +181,34 @@ Q^\pi(s_t, a_t) = \mathbb{E}_\pi \big[ R_t \mid s_t, a_t \big]
 >> 用动作价值函数表达状态价值函数：
 >>
 >> $$
-V^\pi(s_t) = \mathbb{E}_{a_t \sim \pi(\cdot \mid s_t)} \big[ Q^\pi(s_t, a_t) \big]
->>$$
+V^\pi(s_t) = \mathbb{E}_{a_t \sim \pi(\cdot \mid s_t)} \big[ Q^\pi(s_t, a_t) \big]$$
 >>
 >> 上面式子的含义是：状态价值 $V^\pi(s_t)$，等于在状态 $s_t$ 下，按照策略 $\pi$ 采样一个动作 $a_t$，然后在该动作下的动作价值 $Q^\pi(s_t,a_t)$ 的期望值。换句话说，状态的价值就是“在这个状态下，执行策略中可能动作的加权平均价值”，权重由策略 $\pi(a_t \mid s_t)$ 给出。
 >>
 >>$$
-V^\pi(s_t) = \sum_{a_t} \pi(a_t \mid s_t) \, Q^\pi(s_t, a_t)
->>$$
+V^\pi(s_t) = \sum_{a_t} \pi(a_t \mid s_t) \, Q^\pi(s_t, a_t)$$
 >
 > **3. Advantage Function 优势函数**
 > >
 > > 优势函数记作 $A(s_t, a_t)$，它衡量在状态 $s_t$ 下，采取动作 $a_t$ 相比做其他动作好多少：
 > >
 > >$$ \begin{aligned}
-> > A^\pi(s_t, a_t) &= Q^\pi(s_t, a_t) - V^\pi(s_t)
-> >  \end{aligned}$$
+A^\pi(s_t, a_t) &= Q^\pi(s_t, a_t) - V^\pi(s_t)
+\end{aligned}$$
 > >
 > > 我们用这个优势函数作为策略梯度中$(R_t^n - b(s_t^n))$项的代替。如果 $A(s_t, a_t) > 0$，说明这个动作比平均水平更优，应该增大概率；如果 $A(s_t, a_t) < 0$，说明这个动作比平均水平更差，应该减小概率。
 
 接下来，我们推导一下优势函数的具体表达：
 > **$A^\pi(s_t, a_t)$的推导：**
 > >$$ \begin{aligned}
-> > A^\pi(s_t, a_t) &= Q^\pi(s_t, a_t) - V^\pi(s_t)
-> >  \end{aligned}$$
+A^\pi(s_t, a_t) &= Q^\pi(s_t, a_t) - V^\pi(s_t)
+\end{aligned}$$
 > >
 > > $A^{\pi}_i$代表对状态价值的i次采样估计：
 > >
-> > $A^{\pi}_1 = r_t + \gamma V^{\pi}(s_{t+1}) - V^{\pi}(s_t)
-> >$
+> > $A^{\pi}_1 = r_t + \gamma V^{\pi}(s_{t+1}) - V^{\pi}(s_t)$
 > >
-> >$A^{\pi}_2 = r_t + \gamma (r_{t+1} + \gamma V^{\pi}(s_{t+2})) - V^{\pi}(s_t)
->>$
+> >$A^{\pi}_2 = r_t + \gamma (r_{t+1} + \gamma V^{\pi}(s_{t+2})) - V^{\pi}(s_t)$
 >>
 >> ...
 >>
@@ -238,8 +234,9 @@ V^\pi(s_t) = \sum_{a_t} \pi(a_t \mid s_t) \, Q^\pi(s_t, a_t)
 >>
 >> 假设现在我有一个随机变量X服从于分布P(x), 然后我要计算f(x)的期望：$\mathbb{E}_{X\sim P(x)}[f(x)]$
 >>
->> $\mathbb{E}_{X\sim P(x)}[f(x)] = \sum_{} f(x)p(x) = \sum_{} f(x)\frac{p(x)}{q(x)}q(x) = \mathbb{E}_{X\sim Q(x)}[f(x)\frac{p(x)}{q(x)}].
->>$
+>> $\mathbb{E}_{X\sim P(x)}[f(x)] = \sum_{} f(x)p(x) = \sum_{} f(x)\frac{p(x)}{q(x)}q(x)$
+>>
+>>$= \mathbb{E}_{X\sim Q(x)}[f(x)\frac{p(x)}{q(x)}]$
 >>
 >> 即，我如果从P分布里面不好采样，我可以转向一个好采样的Q分布，然后计算f(x)与$\frac{p(x)}{q(x)}$的乘积的期望即可。
 >>
@@ -279,8 +276,7 @@ $$
 > PPO 的目标里有比值：
 >
 > $$
-r_t(\theta) = \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)} ,
->$$
+r_t(\theta) = \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)} ,$$
 >
 > 它反映了 新策略和旧策略在同一个状态下选择相同行为的概率比。
 >
@@ -292,8 +288,7 @@ r_t(\theta) = \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid
    \min\Big(
       r_t(\theta) A_t,\;\;
       \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) A_t
-   \Big)
->$$
+   \Big)$$
 >
 >裁剪的直观意义是：
 >- 当 $r_t(\theta)$ 在区间 $[1-\epsilon, 1+\epsilon]$ 内时，和原来一样；
@@ -310,8 +305,7 @@ r_t(\theta) = \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid
       \pi_{\theta_{\text{old}}}(\cdot \mid s_t)
       \;\|\;
       \pi_\theta(\cdot \mid s_t)
-   \big)
->$$
+   \big)$$
 >
 > 这个方向的KL散度的含义是：让分布$\theta$尽可能的逼近分布$\theta_{old}$.
 > - 当 KL 散度过大，说明新旧策略差异太大，训练可能不稳定,KL 项会把它拉回来，防止模型 “一步跨太大”；
@@ -413,23 +407,22 @@ $$\text{KL}(t) = \log \frac{\pi^{\text{old}}_{\text{RL}}(a_t \mid s_t)}{\pi_{\te
 >>方差衡量的是一个随机变量的波动程度，也就是它的取值离期望值的平均偏离程度。公式是：
 >>
 >>$$
-\mathrm{Var}[X] = \mathbb{E}[(X - \mathbb{E}[X])^2]
->>$$
+\mathrm{Var}[X] = \mathbb{E}[(X - \mathbb{E}[X])^2]$$
 >>
 >>- \(X\) 是一个随机变量
 >>- 方差越大，说明 \(X\) 的取值在平均值周围波动得越厉害  
 >>
 >>在$
--\log r = -\log \frac{p(x)}{q(x)}
->>$中 如果 \(q(x)\) 很小而 \(p(x)\) 相对大 → \(r\) 很大 → \(-log r\) 很小。如果 \(q(x)\) 很大而 \(p(x)\) 很小 → \(r\) 很小 → \(-log r\) 很大。这些极端值会导致单次采样的 \(-log r\) 离真正的期望（即 KL 值）很远，波动大 → 方差高。
+-\log r = -\log \frac{p(x)}{q(x)}$中 如果 \(q(x)\) 很小而 \(p(x)\) 相对大 → \(r\) 很大 → \(-log r\) 很小。如果 \(q(x)\) 很大而 \(p(x)\) 很小 → \(r\) 很小 → \(-log r\) 很大。这些极端值会导致单次采样的 \(-log r\) 离真正的期望（即 KL 值）很远，波动大 → 方差高。
 >
 > **k2估计**
 > > k2 = $\frac{1}{2}(logr)^2$
 >>
 >>
 >>$
-\mathbb{E}_{x\sim Q}[k2] = \mathbb{E}_{x\sim Q}[\frac{1}{2}(logr)^2] = \frac{1}{2}\mathbb{E}_{x\sim Q}[(logr)^2] = \frac{1}{2}\sum q(x)(logr)^2  \neq KL(Q\mid P)
->>$
+\mathbb{E}_{x\sim Q}[k2] = \mathbb{E}_{x\sim Q}[\frac{1}{2}(logr)^2] = \frac{1}{2}\mathbb{E}_{x\sim Q}[(logr)^2]$
+>>
+>>$= \frac{1}{2}\sum q(x)(logr)^2  \neq KL(Q\mid P)$
 >>
 >> 因此k2估计器是KL散度的有偏估计
 >>
@@ -441,8 +434,7 @@ $$\text{KL}(t) = \log \frac{\pi^{\text{old}}_{\text{RL}}(a_t \mid s_t)}{\pi_{\te
 > >
 > >
 > >$
-> >\mathbb{E}_{x\sim Q}[k3] = \mathbb{E}_{x\sim Q}[r-1-logr] = \mathbb{E}_{x\sim Q}[r]  - \mathbb{E}_{x\sim Q}[1] - \mathbb{E}_{x\sim Q}[logr]
-> >$
+> >\mathbb{E}_{x\sim Q}[k3] = \mathbb{E}_{x\sim Q}[r-1-logr] = \mathbb{E}_{x\sim Q}[r]  - \mathbb{E}_{x\sim Q}[1] - \mathbb{E}_{x\sim Q}[logr]$
 > >
 > >=$\sum q(x)*(\frac{p(x)}{q(x)}) - \sum q(x) -  \mathbb{E}_{x\sim Q}[logr]$
 > >
@@ -455,8 +447,37 @@ $$\text{KL}(t) = \log \frac{\pi^{\text{old}}_{\text{RL}}(a_t \mid s_t)}{\pi_{\te
 
 > **联系 between the k1, k2, and k3 Estimators**
 > >
-> > 待更新ing 三者二阶泰勒展开角度的联系
+> > let $r = \frac{p(x)}{q(x)}$, and $\delta=r-1$.
+> > 
+> > 则$k1 = -log(\delta +1)$
+> >
+> >$k2 = \frac{1}{2}(log\frac{p(x)}{q(x)})^2 = \frac{1}{2}(log\frac{q(x)}{p(x)})^2 = \frac{1}{2}(log(\delta+1))^2$
+> >
+> >$k3 = \delta - log(\delta+1)$
+>
+> 接下来，发现k1, k2, k3中都有一个$log(\delta +1)$公共项，可以对它进行泰勒展开
+>
+> $log(\delta +1) = \delta-\frac{1}{2}\delta^2 + o(\delta^3)$
+>
+> 则$k1 \approx -\delta + \frac{1}{2}\delta^2$,
+>
+> $k2 \approx \frac{1}{2}\delta^2$,
+>
+> $k3 \approx \frac{1}{2}\delta^2$、
+> 
+> 结论：
+>
+> $k_2$, $k_3$近似计算都可以由$-\log r = \log \frac{q(x)}{p(x)} \approx \delta - \frac{1}{2} \delta^2$的泰勒展开进行近似。其中，$k_1$ 和 $k_3$ 只使用一次泰勒展开，$k_2$ 则先对 $\log r$ 近似，再平方，等于两次近似。
+$k_3$相当于在$k_1$的基础上加上了$\delta$，而：
 
+$$
+\mathbb{E}_{x \sim q}[\delta] 
+= \mathbb{E}_{x \sim q}\!\left[\frac{p(x)}{q(x)} - 1\right] 
+= \int p(x)\, dx - \int q(x)\, dx 
+= 0.
+$$
+
+所以$k_3$相当于在$k_1$的基础上加上一个期望为$0$的变量，保证了$k_3 \geq 0$ (见上文的证明)，降低方差。
 
 
 
@@ -464,10 +485,81 @@ $$\text{KL}(t) = \log \frac{\pi^{\text{old}}_{\text{RL}}(a_t \mid s_t)}{\pi_{\te
 
 ## 5. GRPO 
 
+在PPO中, 训练的时候需要加载四个模型(policy model、state value model、reward model、ref model)，其中policy model、state value model的梯度要更新，reward model、ref model的梯度不需要进行更新。
+
+在PPO训练的时候，这个statu value model的作用是参与优势函数的计算，因为里面有Q-V(动作价值函数-状态价值函数)，但这个计算出来的值是一个估计值，计算的就会有偏差。
+
+于是deepseekAI lab就提出了GRPO，本质上是在优势函数上做文章，不需要估计state value function。
+
+核心思想是：对于一个prompt，我采样一组response，用这一组的response的reward的相对值代表一个优势，即相对优势，相对这个概念是针对这一组的响应而言的。
+
+首先将ppo算法写成如下的形式：
+
+$$
+\begin{aligned}
+J_{\mathrm{PPO}}(\theta) &= \mathbb{E}_{q \sim P(Q), \; o \sim \pi_{\theta_{\mathrm{old}}}(O|q)} \left[ \frac{1}{|o|} \sum_{t=1}^{|o|} L_t(\theta) \right] \\[8pt]
+\text{其中：} \quad L_t(\theta) &= \min \left(
+    r_t(\theta) \, A_t, \;
+    \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) \, A_t
+  \right) \\[8pt]
+r_t(\theta) &= \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})}
+\end{aligned}
+$$
+
+
+更正一下奖励的计算方式：
+$$
+\begin{aligned}
+r_t &= r_\phi(q, o_{\leq t}) \;-\; \beta \, \text{KL}(t) \\[6pt]
+\text{KL}(t) &= \log \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\mathrm{ref}}(o_t \mid q, o_{<t})}
+\end{aligned}
+$$
+
+GRPO定义如下：
+
+$$
+\begin{aligned}
+J_{\text{GRPO}}(\theta) &= \mathbb{E}_{q \sim P(Q), \{o_i\}_{i=1}^G \sim \pi_{\theta_{\text{old}}}(O \mid q)} \left[ L_{\text{GRPO}}(\theta) \right] \\[8pt]
+L_{\text{GRPO}}(\theta) &= \frac{1}{G} \sum_{i=1}^G \frac{1}{|o_i|} \sum_{t=1}^{|o_i|} L_{i,t}(\theta) - \beta \, D_{\mathrm{KL}}\!\left(\pi_\theta \,\|\, \pi_{\mathrm{ref}}\right) \\[8pt]
+L_{i,t}(\theta) &= \min \left(
+r_{i,t}(\theta) \, \hat{A}_{i,t}, \;
+\text{clip}(r_{i,t}(\theta), 1-\varepsilon, 1+\varepsilon) \, \hat{A}_{i,t}
+\right) \\[8pt]
+\end{aligned}
+$$
+
+$$
+\hat{A}_{i,t} = e r_i = r_i - \mathrm{mean}(r)
+$$
+
+**Input**: initial policy model $\pi_{\theta}^{\text{init}}$; reward models $r_\phi$; task prompts $D$; hyperparameters $\epsilon, \beta, \mu$  
+
+1. Policy model $\pi_{\theta} \leftarrow \pi_{\theta}^{\text{init}}$  
+2. For iteration $= 1, \ldots, I$ do  
+   1. Reference model $\pi_{\text{ref}} \leftarrow \pi_{\theta}$  
+   2. For step $= 1, \ldots, M$ do  
+      1. Sample a batch $D_b$ from $D$  
+      2. Update the old policy model $\pi_{\theta}^{\text{old}} \leftarrow \pi_{\theta}$  
+      3. Sample $G$ outputs $\{ o_i \}_{i=1}^G \sim \pi_{\theta}^{\text{old}}(\cdot \mid q)$ for each question $q \in D_b$  
+      4. Compute rewards $\{ r_i \}_{i=1}^G$ for each sampled output $o_i$ by running $r_\phi$  
+      5. Compute $\hat{A}_{i,t}$ for the $t$-th token of $o_i$ through group relative advantage estimation.  
+      6. For GRPO iteration $= 1, \ldots, \mu$ do  
+         1. Update the policy model $\pi_\theta$ by maximizing the GRPO objective (Equation 21)  
+         2. Update $r_\phi$ through continuous training using a replay mechanism.  
+
+**Output**: $\pi_\theta$
 
 
 ## 6. GRPO会出现的一些问题
 
+DAPO提出的问题
+
+训练后期token裁剪过多的问题
+
+其他问题
+
 ## 7. GSPO
 
 ## 8. 后续我的研究思路和成果
+
+围绕能量策略和熵正则角度
