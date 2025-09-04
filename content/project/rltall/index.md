@@ -496,70 +496,85 @@ $$
 首先将ppo算法写成如下的形式：
 
 $$
-\begin{aligned}
-J_{\mathrm{PPO}}(\theta) &= \mathbb{E}_{q \sim P(Q), \; o \sim \pi_{\theta_{\mathrm{old}}}(O|q)} \left[ \frac{1}{|o|} \sum_{t=1}^{|o|} L_t(\theta) \right] \\[8pt]
-\text{其中：} \quad L_t(\theta) &= \min \left(
-    r_t(\theta) \, A_t, \;
-    \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) \, A_t
-  \right) \\[8pt]
-r_t(\theta) &= \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})}
-\end{aligned}
+J_{\mathrm{PPO}}(\theta) 
+= \mathbb{E}_{q \sim P(Q), \; o \sim \pi_{\theta_{\mathrm{old}}}(O|q)}
+\left[
+  \alpha
+\right]
 $$
+
+$$\alpha = \frac{1}{|o|} \sum_{t=1}^{|o|}
+  \min \left(
+    \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})} \, A_t,\;
+    \mathrm{clip}\!\left(
+      \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})},
+      1-\epsilon,\;1+\epsilon
+    \right) A_t
+  \right)$$
+
+> **关于clip和为什么取min的细节：**
+>
+> 之前看PPO的时候，以为PPO-Clip 引入了 clip 方法来控制策略（即动作概率）更新的幅度，确保新旧策略之间的变化在一定范围内，避免了过大的策略更新导致的性能下降或不稳定性。今天从另外一个角度来看看这个clip的真正寓意！
+>
+> $$ \min \left(
+    \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})} \, A_t,\;
+    \mathrm{clip}\!\left(
+      \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})},
+      1-\epsilon,\;1+\epsilon
+    \right) A_t
+  \right)$$
+>
+>> - 当$A_{t}>0$的时候，说明执行当前动作$a_t$相较于其他动作要更好，因此要提升$\pi_{\theta}(a_t|s_t)$。但是也不能一味的提升它，这主要是由于以下两个原因
+> > 1.  策略偏离旧策略太快 → 采样分布失效: 因为样本是从旧策略生成的，如果新策略变化太大就会导致新策略下的动作分布和旧策略差异很大，那么原来的优势估计就不再可靠。
+> > 2.  梯度爆炸或不稳定: 比如某个动作at的概率原本很小=0.01, 如果无限制的提升其概率到0.9，这会导致梯度非常大，训练过程震荡甚至发散。
+> > 3.  过度集中策略 → 探索不足: 如果每次都把概率无限提升，策略会迅速收敛到少数几个动作, 导致 探索不足，可能陷入局部最优
+> >- 当$A_{t}<0$的时候，说明执行当前动作$a_t$相较于其他动作要更差，因此要降低$\pi_{\theta}(a_t|s_t)$。同样地，不能一味的降低它的概率，需要使用clip进行截断
+>
+
+> 对于初学者，这其中可能蕴含着两个疑惑：
+> 1. 对概率比值做 clip，固定在阈值处，究竟意味着什么？
+> 2. 如果 clip 是用于控制动作概率变化幅度的，那为什么还需要 min ？比如说按照下界进行 clip ，结果取完 min 操作保留的却还是未 clip 的值？
+>
+> > 问题1：如果执行了clip之后将$\frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})}$,固定在阈值之内，变成了一个常数，那么就意味着这个token不会参与梯度计算(参数没了，也就无法计算梯度，也就是说这个token不参与梯度的更新，失效了！)
+>
+> > 问题2：如果仅 Clip 不 min 操作的话：当 A>0 时，在禁止进一步增大高概率 token 的概率的同时，小概率 token 的概率增长也被意外地禁止了；A<0时同理。举例A>0的情况，当概率比率比较小时(< 1 - ε)，即当前policy model输出该token的概率远小于 old policy model的时候，clip操作会选择忽视该token不进行更新，但这是不合理的，我们要对该小概率token进行更新，所以此时需要加一个min操作使clip操作失效；A<0 情况同理。
 
 
 更正一下奖励的计算方式：
 $$
-\begin{aligned}
-r_t &= r_\phi(q, o_{\leq t}) \;-\; \beta \, \text{KL}(t) \\[6pt]
-\text{KL}(t) &= \log \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\mathrm{ref}}(o_t \mid q, o_{<t})}
-\end{aligned}
+r_t = r_\phi(q, o_{\leq t}) \;-\; \beta \, 
+\log \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\mathrm{ref}}(o_t \mid q, o_{<t})}
 $$
 
 GRPO定义如下：
 
 $$
-\begin{aligned}
-J_{\text{GRPO}}(\theta) &= \mathbb{E}_{q \sim P(Q), \{o_i\}_{i=1}^G \sim \pi_{\theta_{\text{old}}}(O \mid q)} \left[ L_{\text{GRPO}}(\theta) \right] \\[8pt]
-L_{\text{GRPO}}(\theta) &= \frac{1}{G} \sum_{i=1}^G \frac{1}{|o_i|} \sum_{t=1}^{|o_i|} L_{i,t}(\theta) - \beta \, D_{\mathrm{KL}}\!\left(\pi_\theta \,\|\, \pi_{\mathrm{ref}}\right) \\[8pt]
-L_{i,t}(\theta) &= \min \left(
-r_{i,t}(\theta) \, \hat{A}_{i,t}, \;
-\text{clip}(r_{i,t}(\theta), 1-\varepsilon, 1+\varepsilon) \, \hat{A}_{i,t}
-\right) \\[8pt]
-\end{aligned}
+J_{\text{GRPO}}(\theta) = 
+\mathbb{E}_{q \sim P(Q), \{o_i\}_{i=1}^G \sim \pi_{\theta_{\text{old}}}(O \mid q)}
+\left[
+\alpha
+\right]
 $$
 
+$$\alpha = \frac{1}{G} \sum_{i=1}^G \frac{1}{|o_i|} \sum_{t=1}^{|o_i|}
+\min \left(
+\frac{\pi_\theta(o_{i,t} \mid q, o_{i,<t})}{\pi_{\theta_{\text{old}}}(o_{i,t} \mid q, o_{i,<t})} \, \hat{A}_{i,t},
+\;
+\mathrm{clip}\!\left(
+\frac{\pi_\theta(o_{i,t} \mid q, o_{i,<t})}{\pi_{\theta_{\text{old}}}(o_{i,t} \mid q, o_{i,<t})},
+\, 1-\varepsilon, \, 1+\varepsilon
+\right) \hat{A}_{i,t}
+\right)
 $$
-\hat{A}_{i,t} = e r_i = r_i - \mathrm{mean}(r)
+
+$- \beta \, D_{\mathrm{KL}}\!\left(\pi_\theta \,\|\, \pi_{\mathrm{ref}}\right)$
+
 $$
-
-**Input**: initial policy model $\pi_{\theta}^{\text{init}}$; reward models $r_\phi$; task prompts $D$; hyperparameters $\epsilon, \beta, \mu$  
-
-1. Policy model $\pi_{\theta} \leftarrow \pi_{\theta}^{\text{init}}$  
-2. For iteration $= 1, \ldots, I$ do  
-   1. Reference model $\pi_{\text{ref}} \leftarrow \pi_{\theta}$  
-   2. For step $= 1, \ldots, M$ do  
-      1. Sample a batch $D_b$ from $D$  
-      2. Update the old policy model $\pi_{\theta}^{\text{old}} \leftarrow \pi_{\theta}$  
-      3. Sample $G$ outputs $\{ o_i \}_{i=1}^G \sim \pi_{\theta}^{\text{old}}(\cdot \mid q)$ for each question $q \in D_b$  
-      4. Compute rewards $\{ r_i \}_{i=1}^G$ for each sampled output $o_i$ by running $r_\phi$  
-      5. Compute $\hat{A}_{i,t}$ for the $t$-th token of $o_i$ through group relative advantage estimation.  
-      6. For GRPO iteration $= 1, \ldots, \mu$ do  
-         1. Update the policy model $\pi_\theta$ by maximizing the GRPO objective (Equation 21)  
-         2. Update $r_\phi$ through continuous training using a replay mechanism.  
-
-**Output**: $\pi_\theta$
-
+\hat{A}_{i,t}  = \frac{r_i - \mathrm{mean}(r)}{std(r)}
+$$
 
 ## 6. GRPO会出现的一些问题
-
-DAPO提出的问题
-
-训练后期token裁剪过多的问题
-
-其他问题
 
 ## 7. GSPO
 
 ## 8. 后续我的研究思路和成果
-
-围绕能量策略和熵正则角度
