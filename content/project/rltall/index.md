@@ -463,7 +463,7 @@ $$\text{KL}(t) = \log \frac{\pi^{\text{old}}_{\text{RL}}(a_t \mid s_t)}{\pi_{\te
 >
 > $k2 \approx \frac{1}{2}\delta^2$,
 >
-> $k3 \approx \frac{1}{2}\delta^2$、
+> $k3 \approx \frac{1}{2}\delta^2$
 > 
 > 结论：
 >
@@ -503,26 +503,30 @@ J_{\mathrm{PPO}}(\theta)
 \right]
 $$
 
-$$\alpha = \frac{1}{|o|} \sum_{t=1}^{|o|}
-  \min \left(
-    \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})} \, A_t,\;
-    \mathrm{clip}\!\left(
+$$\begin{align*}
+\alpha = \frac{1}{|o|} \sum_{t=1}^{|o|}
+  \min \Biggl(
+    &\frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})} \, A_t,\; \nonumber\\
+    &\mathrm{clip}\!\left(
       \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})},
       1-\epsilon,\;1+\epsilon
     \right) A_t
-  \right)$$
+  \Biggr)
+\end{align*}
+$$
 
 > **关于clip和为什么取min的细节：**
 >
 > 之前看PPO的时候，以为PPO-Clip 引入了 clip 方法来控制策略（即动作概率）更新的幅度，确保新旧策略之间的变化在一定范围内，避免了过大的策略更新导致的性能下降或不稳定性。今天从另外一个角度来看看这个clip的真正寓意！
 >
-> $$ \min \left(
+$$ \min \left(
     \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})} \, A_t,\;
     \mathrm{clip}\!\left(
       \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})},
       1-\epsilon,\;1+\epsilon
     \right) A_t
-  \right)$$
+  \right)
+$$
 >
 >> - 当$A_{t}>0$的时候，说明执行当前动作$a_t$相较于其他动作要更好，因此要提升$\pi_{\theta}(a_t|s_t)$。但是也不能一味的提升它，这主要是由于以下两个原因
 > > 1.  策略偏离旧策略太快 → 采样分布失效: 因为样本是从旧策略生成的，如果新策略变化太大就会导致新策略下的动作分布和旧策略差异很大，那么原来的优势估计就不再可靠。
@@ -535,16 +539,11 @@ $$\alpha = \frac{1}{|o|} \sum_{t=1}^{|o|}
 > 1. 对概率比值做 clip，固定在阈值处，究竟意味着什么？
 > 2. 如果 clip 是用于控制动作概率变化幅度的，那为什么还需要 min ？比如说按照下界进行 clip ，结果取完 min 操作保留的却还是未 clip 的值？
 >
-> > 问题1：如果执行了clip之后将$\frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})}$,固定在阈值之内，变成了一个常数，那么就意味着这个token不会参与梯度计算(参数没了，也就无法计算梯度，也就是说这个token不参与梯度的更新，失效了！)
+> > 问题1：如果执行了clip之后将
+> $\frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})}$
+> ,固定在阈值之内，变成了一个常数，那么就意味着这个token不会参与梯度计算(参数没了，也就无法计算梯度，也就是说这个token不参与梯度的更新，失效了！)
 >
 > > 问题2：如果仅 Clip 不 min 操作的话：当 A>0 时，在禁止进一步增大高概率 token 的概率的同时，小概率 token 的概率增长也被意外地禁止了；A<0时同理。举例A>0的情况，当概率比率比较小时(< 1 - ε)，即当前policy model输出该token的概率远小于 old policy model的时候，clip操作会选择忽视该token不进行更新，但这是不合理的，我们要对该小概率token进行更新，所以此时需要加一个min操作使clip操作失效；A<0 情况同理。
-
-
-更正一下奖励的计算方式：
-$$
-r_t = r_\phi(q, o_{\leq t}) \;-\; \beta \, 
-\log \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\mathrm{ref}}(o_t \mid q, o_{<t})}
-$$
 
 GRPO定义如下：
 
@@ -556,18 +555,20 @@ J_{\text{GRPO}}(\theta) =
 \right]
 $$
 
-$$\alpha = \frac{1}{G} \sum_{i=1}^G \frac{1}{|o_i|} \sum_{t=1}^{|o_i|}
-\min \left(
-\frac{\pi_\theta(o_{i,t} \mid q, o_{i,<t})}{\pi_{\theta_{\text{old}}}(o_{i,t} \mid q, o_{i,<t})} \, \hat{A}_{i,t},
-\;
-\mathrm{clip}\!\left(
-\frac{\pi_\theta(o_{i,t} \mid q, o_{i,<t})}{\pi_{\theta_{\text{old}}}(o_{i,t} \mid q, o_{i,<t})},
-\, 1-\varepsilon, \, 1+\varepsilon
-\right) \hat{A}_{i,t}
-\right)
 $$
-
-$- \beta \, D_{\mathrm{KL}}\!\left(\pi_\theta \,\|\, \pi_{\mathrm{ref}}\right)$
+\begin{aligned}
+\alpha = \frac{1}{G} \sum_{i=1}^G \frac{1}{|o_i|} \sum_{t=1}^{|o_i|}
+& \min \Biggl(
+  \frac{\pi_\theta(o_{i,t} \mid q, o_{i,< t})}{\pi_{\theta_{\text{old}}}(o_{i,t} \mid q, o_{i,< t})} \, \hat{A}_{i,t}, \\
+& \qquad
+  \mathrm{clip}\!\Biggl(
+    \frac{\pi_\theta(o_{i,t} \mid q, o_{i,< t})}{\pi_{\theta_{\text{old}}}(o_{i,t} \mid q, o_{i,< t})}, 
+    1-\varepsilon, \, 1+\varepsilon
+  \Biggr) \hat{A}_{i,t}
+\Biggr) \\
+& - \beta \, D_{\mathrm{KL}}\!\left[\pi_\theta \,\|\, \pi_{\mathrm{ref}}\right]
+\end{aligned}
+$$
 
 $$
 \hat{A}_{i,t}  = \frac{r_i - \mathrm{mean}(r)}{std(r)}
