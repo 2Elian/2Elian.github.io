@@ -1,6 +1,6 @@
 ---
-title: 🧠 RAG 与 NL2SQL 融合架构下的服务材料撰写系统
-summary: RAG流程设计、DeepSeek微调
+title: Service material writing system based on RAG and NL2SQL fusion architecture
+summary: RAG process design and DeepSeek fine-tuning
 tags:
   - Large Language Model
 date: 2025-05-04

@@ -1,6 +1,6 @@
 ---
-title: 🐤 ElianFactory：在Windows系统上微调大语言模型变得容易
-summary: LLM微调、LLM推理
+title: ElianFactory: Fine-tuning large language models on Windows made easy
+summary: This project developed a tool that can perform fine-tuning training of large models on Windows systems. The fine-tuning inference framework is developed based on the transformers library.
 tags:
   - Application
 date: 2022-01-01
