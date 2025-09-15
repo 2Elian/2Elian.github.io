@@ -28,17 +28,17 @@ content:
   filter_button:
     - name: All
       tag: '*'
-    - name: Machine Learning
-      tag: ML
+    - name: Large Language Model
+      tag: Large Language Model
     - name: Computer Vision
-      tag: CV
-    - name: NLP
-      tag: NLP
+      tag: Computer Vision
+    - name: Application
+      tag: Application
 
 design:
   columns: '1'
-  view: masonry
-  flip_alt_rows: true
+  view: list
+  flip_alt_rows: false
   background: {}
   spacing: {padding: [0, 0, 0, 0]}
 ---

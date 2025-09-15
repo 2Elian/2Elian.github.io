@@ -2,7 +2,7 @@
 title: "从策略梯度PG到群组序列策略优化GSPO: 关于RLHF的一些思考"
 summary: "LLM、RL、RLHF、PPO、GRPO、GSPO"
 tags:
-  - NLP
+  - Large Language Model
 date: 2025-08-29
 ---
 
@@ -503,30 +503,25 @@ J_{\mathrm{PPO}}(\theta)
 \right]
 $$
 
-$$\begin{align*}
-\alpha = \frac{1}{|o|} \sum_{t=1}^{|o|}
-  \min \Biggl(
-    &\frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})} \, A_t,\; \nonumber\\
-    &\mathrm{clip}\!\left(
-      \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})},
-      1-\epsilon,\;1+\epsilon
-    \right) A_t
-  \Biggr)
-\end{align*}
+其中 $\alpha$ 定义为：
 $$
+\alpha = \frac{1}{|o|} \sum_{t=1}^{|o|} \min \left(
+    r_t(\theta) \, A_t, \;
+    \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) \, A_t
+\right)
+$$
+
+这里：$r_t(\theta) = \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})}$
 
 > **关于clip和为什么取min的细节：**
 >
 > 之前看PPO的时候，以为PPO-Clip 引入了 clip 方法来控制策略（即动作概率）更新的幅度，确保新旧策略之间的变化在一定范围内，避免了过大的策略更新导致的性能下降或不稳定性。今天从另外一个角度来看看这个clip的真正寓意！
 >
-$$ \min \left(
-    \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})} \, A_t,\;
-    \mathrm{clip}\!\left(
-      \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})},
-      1-\epsilon,\;1+\epsilon
-    \right) A_t
-  \right)
-$$
+> PPO的核心clip机制：
+>
+> $$L_t^{\text{CLIP}} = \min \left( r_t(\theta) \cdot A_t, \; \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) \cdot A_t \right)$$
+>
+> 其中：$r_t(\theta) = \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})}$
 >
 >> - 当$A_{t}>0$的时候，说明执行当前动作$a_t$相较于其他动作要更好，因此要提升$\pi_{\theta}(a_t|s_t)$。但是也不能一味的提升它，这主要是由于以下两个原因
 > > 1.  策略偏离旧策略太快 → 采样分布失效: 因为样本是从旧策略生成的，如果新策略变化太大就会导致新策略下的动作分布和旧策略差异很大，那么原来的优势估计就不再可靠。
@@ -539,11 +534,18 @@ $$
 > 1. 对概率比值做 clip，固定在阈值处，究竟意味着什么？
 > 2. 如果 clip 是用于控制动作概率变化幅度的，那为什么还需要 min ？比如说按照下界进行 clip ，结果取完 min 操作保留的却还是未 clip 的值？
 >
-> > 问题1：如果执行了clip之后将
-> $\frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})}$
-> ,固定在阈值之内，变成了一个常数，那么就意味着这个token不会参与梯度计算(参数没了，也就无法计算梯度，也就是说这个token不参与梯度的更新，失效了！)
+> > **问题1：clip操作的实际含义**
+> > 
+> > 如果执行了clip之后，将概率比 $r_t(\theta) = \frac{\pi_\theta(o_t \mid q, o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q, o_{<t})}$ 固定在阈值之内变成常数，那么就意味着这个token不会参与梯度计算（参数没了，无法计算梯度），也就是说这个token不参与梯度更新，失效了！
 >
-> > 问题2：如果仅 Clip 不 min 操作的话：当 A>0 时，在禁止进一步增大高概率 token 的概率的同时，小概率 token 的概率增长也被意外地禁止了；A<0时同理。举例A>0的情况，当概率比率比较小时(< 1 - ε)，即当前policy model输出该token的概率远小于 old policy model的时候，clip操作会选择忽视该token不进行更新，但这是不合理的，我们要对该小概率token进行更新，所以此时需要加一个min操作使clip操作失效；A<0 情况同理。
+> > **问题2：为什么需要min操作？**
+> > 
+> > 如果仅使用clip而不用min操作：
+> > 
+> > - **当$A_t > 0$时**：在禁止进一步增大高概率token概率的同时，小概率token的概率增长也被意外禁止了
+> > - **当$A_t < 0$时**：类似问题
+> > 
+> > **具体例子**（$A_t > 0$情况）：当概率比率较小时（$r_t < 1-\varepsilon$），即当前策略输出该token的概率远小于旧策略时，clip操作会忽视该token不进行更新。但这是不合理的——我们应该对该小概率token进行更新，所以需要min操作使clip失效。$A_t < 0$情况同理。
 
 GRPO定义如下：
 
@@ -555,27 +557,48 @@ J_{\text{GRPO}}(\theta) =
 \right]
 $$
 
+其中 $\alpha$ 定义为：
 $$
 \begin{aligned}
-\alpha = \frac{1}{G} \sum_{i=1}^G \frac{1}{|o_i|} \sum_{t=1}^{|o_i|}
-& \min \Biggl(
-  \frac{\pi_\theta(o_{i,t} \mid q, o_{i,< t})}{\pi_{\theta_{\text{old}}}(o_{i,t} \mid q, o_{i,< t})} \, \hat{A}_{i,t}, \\
-& \qquad
-  \mathrm{clip}\!\Biggl(
-    \frac{\pi_\theta(o_{i,t} \mid q, o_{i,< t})}{\pi_{\theta_{\text{old}}}(o_{i,t} \mid q, o_{i,< t})}, 
-    1-\varepsilon, \, 1+\varepsilon
-  \Biggr) \hat{A}_{i,t}
-\Biggr) \\
-& - \beta \, D_{\mathrm{KL}}\!\left[\pi_\theta \,\|\, \pi_{\mathrm{ref}}\right]
+\alpha &= \frac{1}{G} \sum_{i=1}^G \frac{1}{|o_i|} \sum_{t=1}^{|o_i|} L_{i,t}(\theta) - \beta \, D_{\mathrm{KL}}(\pi_\theta \| \pi_{\mathrm{ref}}) \\[8pt]
+L_{i,t}(\theta) &= \min \left(
+  r_{i,t}(\theta) \, \hat{A}_{i,t}, \;
+  \text{clip}(r_{i,t}(\theta), 1-\varepsilon, 1+\varepsilon) \, \hat{A}_{i,t}
+\right) \\[8pt]
+r_{i,t}(\theta) &= \frac{\pi_\theta(o_{i,t} \mid q, o_{i,< t})}{\pi_{\theta_{\text{old}}}(o_{i,t} \mid q, o_{i,< t})}
 \end{aligned}
 $$
 
-$$
-\hat{A}_{i,t}  = \frac{r_i - \mathrm{mean}(r)}{std(r)}
-$$
+**GRPO中的优势函数**（相对优势，基于组内reward标准化）：
+$$\hat{A}_{i,t} = \frac{r_i - \text{mean}(r)}{\text{std}(r)}$$
 
 ## 6. GRPO会出现的一些问题
 
-## 7. GSPO
+### 6.1 熵坍塌问题
 
-## 8. 后续我的研究思路和成果
+   模型训练到后期的时候, 得到的rollout差别非常小, 也就是说：模型趋近于确定性. 这导致了计算优势的时候, 几乎为0, 导致模型无法更新：
+
+   谁解决了这个问题呢？：DAPO
+
+### 6.2 训练后期token裁剪率过高
+   训练后期clip会把大多数token裁剪掉，导致参与梯度更新的token非常少，模型几乎不发生更新。另外，大量的token被裁剪的原因是：大多数token在某个节点脱离ref model太远！
+
+   GSPO可解
+
+   DCPO可解的更好
+
+### 6.3 GRPO计算优势函数的时候, 组内采样的G需很大才行
+
+   在群体规模不大的时候，其均值mean(r)的方差太大，导致模型训练不稳定。
+
+   PVPO可解
+
+
+## 7. 后续我的研究思路和成果
+
+### 7.1 从熵正则角度来看GRPO
+
+
+### 7.2 群组能量策略优化
+
+   这是我的创新点
