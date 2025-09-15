@@ -1,6 +1,6 @@
 ---
-title: LLM reasoning system based on FastAPI and vLLM
-summary: vHPR is an LLM reasoning system built on FastAPI and vLLM. Its primary purpose is to evaluate LLM benchmarks. The system provides a complete benchmark evaluation API and performance monitoring system.
+title: "LLM reasoning system based on FastAPI and vLLM"
+summary: "vHPR is an LLM reasoning system built on FastAPI and vLLM. Its primary purpose is to evaluate LLM benchmarks. The system provides a complete benchmark evaluation API and performance monitoring system."
 tags:
   - Large Language Model
 date: 2025-05-01

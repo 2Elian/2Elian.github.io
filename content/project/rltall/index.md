@@ -1,6 +1,6 @@
 ---
 title: "From Policy Gradient (PG) to Group Sequence Policy Optimization (GSPO): Some Thoughts on RLHF"
-summary: "LLM、RL、RLHF、PPO、GRPO、GSPO"
+summary: "This article will introduce the policy gradient algorithm from the optimization objective of LLM-RL and gradually transition to the GSPO algorithm. It will also point out the current problems of RLHF and summarize the solutions summarized from some experiments I have conducted."
 tags:
   - Large Language Model
 date: 2025-08-29

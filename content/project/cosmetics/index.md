@@ -1,6 +1,6 @@
 ---
-title: Service material writing system based on RAG and NL2SQL fusion architecture
-summary: RAG process design and DeepSeek fine-tuning
+title: "Service material writing system based on RAG and NL2SQL fusion architecture"
+summary: "RAG process design and DeepSeek fine-tuning"
 tags:
   - Large Language Model
 date: 2025-05-04
