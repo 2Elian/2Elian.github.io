@@ -8,15 +8,15 @@ body {
 .article-container {
   background-color: #fff;
   border-radius: 15px;
-  max-width: 90%;
-  width: 90%;
+  max-width: 75%;
+  width: 75%;
   margin: 0 auto;
 }
 
 .dark .article-container {
   background-color: rgb(31, 39, 51);
-  max-width: 90%;
-  width: 90%;
+  max-width: 75%;
+  width: 75%;
   margin: 0 auto;
 }
 
@@ -29,11 +29,7 @@ body {
   background-color: rgb(26, 32, 44);
 }
 
-// more rounded cards and larger gap between cards
-.card-simple {
-  margin-top: 1.8rem;
-  border-radius: 15px;
-}
+// Card styling is now handled in the project section below
 
 .dark .card-simple {
   background: rgb(31, 39, 51);
@@ -127,8 +123,8 @@ ul.network-icon .big-icon {
 // Additional styles for wider article content
 .docs-article-container,
 .universal-wrapper {
-  max-width: 90% !important;
-  width: 90% !important;
+  max-width: 75% !important;
+  width: 75% !important;
 }
 
 .article-style .article-metadata {
@@ -141,25 +137,147 @@ main .container {
   max-width: 95% !important;
 }
 
-// Optimize project list view
-.project-card {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
+// Optimize project list view - Card style like image 1
+.card-simple {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border-radius: 15px;
+  border: 1px solid #e5e7eb;
+  background-color: #fff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
 }
 
-.project-card h3 {
-  margin-bottom: 0.5rem;
-  font-size: 1.25rem;
+.card-simple:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
 }
 
-.project-card .card-text {
+.dark .card-simple {
+  background: rgb(31, 39, 51);
+  border: 1px solid #374151;
+}
+
+.dark .card-simple:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+// Project title styling
+.card-simple .section-subheading,
+.card-simple h3 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: #1f2937;
   margin-bottom: 0.75rem;
-  color: #6c757d;
+  line-height: 1.4;
 }
 
-.project-card .article-metadata {
+.dark .card-simple .section-subheading,
+.dark .card-simple h3 {
+  color: #f9fafb;
+}
+
+// Project summary styling
+.card-simple .summary,
+.card-simple .card-text,
+.card-simple p {
+  color: #6b7280;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.dark .card-simple .summary,
+.dark .card-simple .card-text,
+.dark .card-simple p {
+  color: #d1d5db;
+}
+
+// Project metadata (date, tags) styling
+.card-simple .article-metadata,
+.card-simple .pub-list-item .article-metadata {
   font-size: 0.875rem;
-  color: #6c757d;
+  color: #9ca3af;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.dark .card-simple .article-metadata,
+.dark .card-simple .pub-list-item .article-metadata {
+  color: #9ca3af;
+  border-top: 1px solid #374151;
+}
+
+// Ensure proper spacing in list view
+.view-list .card-simple {
+  display: block;
+  width: 100%;
+}
+
+// Portfolio section specific styling
+.wg-portfolio .card-simple {
+  margin-top: 1.8rem;
+}
+
+// Remove any conflicting link styles
+.card-simple a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card-simple a:hover {
+  text-decoration: none;
+}
+
+// Additional styling for compact view
+.view-compact .card,
+.isotope-item {
+  margin-bottom: 2rem;
+}
+
+.view-compact .card-simple {
+  height: auto;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+}
+
+// Ensure project links cover the entire card
+.card-simple .card-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.card-simple {
+  position: relative;
+}
+
+// Override any default card styling
+.wg-portfolio .isotope-item .card,
+.wg-portfolio .card {
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.dark .wg-portfolio .isotope-item .card,
+.dark .wg-portfolio .card {
+  border: 1px solid #374151;
+  background: rgb(31, 39, 51);
+}
+
+// Project content layout
+.card-simple .card-body {
+  padding: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-simple .section-subheading {
+  margin-top: 0;
 }
