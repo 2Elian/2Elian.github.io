@@ -128,13 +128,13 @@ ul.network-icon .big-icon {
 }
 
 .article-style .article-metadata {
-  max-width: 90%;
+  max-width: 75%;
   margin: 0 auto;
 }
 
 // Make main content area wider
 main .container {
-  max-width: 95% !important;
+  max-width: 75% !important;
 }
 
 // Optimize project list view - Card style like image 1
@@ -201,12 +201,72 @@ main .container {
   margin-top: auto;
   padding-top: 0.75rem;
   border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .dark .card-simple .article-metadata,
 .dark .card-simple .pub-list-item .article-metadata {
   color: #9ca3af;
   border-top: 1px solid #374151;
+}
+
+// Author and date styling for project cards
+.card-simple .article-metadata {
+  position: relative;
+}
+
+.card-simple .article-metadata::after {
+  content: "Author: @Elian";
+  font-weight: 500;
+  color: #6b7280;
+  position: absolute;
+  left: 0;
+}
+
+.dark .card-simple .article-metadata::after {
+  color: #d1d5db;
+}
+
+// Specific date styling for each project
+.card-simple[href*="cartoon"] .article-metadata::before {
+  content: "May 1, 2025";
+  float: right;
+  color: #9ca3af;
+}
+
+.card-simple[href*="cosmetics"] .article-metadata::before {
+  content: "May 4, 2025";
+  float: right;
+  color: #9ca3af;
+}
+
+.card-simple[href*="recommendation"] .article-metadata::before {
+  content: "January 1, 2022";
+  float: right;
+  color: #9ca3af;
+}
+
+.card-simple[href*="rltall"] .article-metadata::before {
+  content: "August 29, 2025";
+  float: right;
+  color: #9ca3af;
+}
+
+.dark .card-simple .article-metadata::before {
+  color: #9ca3af;
+}
+
+// Date styling
+.card-simple .article-date {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.dark .card-simple .article-date {
+  color: #9ca3af;
 }
 
 // Ensure proper spacing in list view
