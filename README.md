@@ -3,3 +3,5 @@
 [![Screenshot](preview.png)](https://2elian.github.io/)
 
 hello, i am elian, a llm algorithm engineer. this is my homepage.
+
+The cover image is 1200*912

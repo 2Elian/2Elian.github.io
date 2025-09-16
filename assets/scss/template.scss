@@ -254,6 +254,12 @@ main .container {
   color: #9ca3af;
 }
 
+.card-simple[href*="paperHARP"] .article-metadata::before {
+  content: "August 29, 2025";
+  float: right;
+  color: #9ca3af;
+}
+
 .dark .card-simple .article-metadata::before {
   color: #9ca3af;
 }
